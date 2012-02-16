@@ -82,7 +82,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function loadMetadata( $filepath )
     {
-
+        return $this->client->get( md5( $filepath ) );
     }
 
     /**
@@ -93,7 +93,22 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function storeMetadata( array $metadata )
     {
+        $filepathHash = md5( $metadata['name'] );
+        $this->client->set( $filepathHash, $metadata );
 
+        // if metadata contain a name trunk, we add the file hash to this nametrunk map in memcache
+        if ( $metadata['name_trunk'] && $metadata['name_trunk'] !== $metadata['name'] )
+        {
+            $nametrunk = $metadata['name_trunk'];
+            $map = $this->client->get( $nametrunk );
+            if ( $map === false )
+                $map = array();
+            if ( !isset( $map[$nametrunk][$filepathHash] ) )
+            {
+                $map[$nametrunk][$filepathHash] = true;
+                $this->client->set( $nametrunk, $map)
+            }
+        }
     }
 
     /**
@@ -109,7 +124,12 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function fileExists( $filepath )
     {
+        $metadata = $this->client->get( $filepath );
 
+        if ( $metadata === false )
+            return false;
+
+        return array( 'name' => $metadata['name'], 'mtime' => $metadata['mtime'] );
     }
 
     /**
@@ -120,7 +140,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function deleteFile( $filepath )
     {
-
+        $this->client->delete( md5( $filepath ) );
     }
 
     /**
@@ -131,7 +151,9 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function deleteByLike( $like )
     {
-
+        // We don't have an index in memcache that allows for such queries
+        // The only way is therefore to fully flush memcache
+        $this->client->flush();
     }
 
     /**
@@ -142,7 +164,9 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function deleteByWildcard( $wildcard )
     {
-
+        // We don't have an index in memcache that allows for such queries
+        // The only way is therefore to fully flush memcache
+        $this->client->flush();
     }
 
     /**
@@ -155,7 +179,9 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function deleteByDirList( array $dirList, $commonPath, $commonSuffix )
     {
-
+        // We don't have an index in memcache that allows for such queries
+        // The only way is therefore to fully flush memcache
+        $this->client->flush();
     }
 
     /**
@@ -166,6 +192,11 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function deleteByNametrunk( $nametrunk )
     {
+        $nametrunkMap = $this->client->get( $nametrunk );
+        if ( $nametrunkMap === false || !is_array( $nametrunkMap ) )
+            return;
 
+        foreach( array_keys( $nametrunkMap ) as $filepathHash )
+            $this->client->delete( md5( $filepathHash ) );
     }
 }
