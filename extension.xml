@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<software>
+    <metadata>
+        <name>eZ Cluster Memcache</name>
+        <version>//autogentag//</version>
+        <copyright>Copyright (C) 2012 eZ Systems AS.</copyright>
+        <license>//EZP_LICENSE//</license>
+        <info_url></info_url>
+
+        <software>
+            <uses>
+                <name>Memcached PECL extension</name>
+                <license>PHP Licence</license>
+                <copyright>Andrei Zmievski</copyright>
+                <info_url>http://php.net/memcached</info_url>
+                <version>1.0.2</version>
+            </uses>
+        </software>
+
+    </metadata>
+
+</software>
