@@ -31,6 +31,13 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
     protected $tokens = array();
 
     /**
+     * Options for the gateway
+     *
+     * @var eZMemcachedClusterOptions
+     */
+    protected $options;
+
+    /**
      * Constructor.
      * An exception will be thrown if Memcached PECL extension is not installed.
      *
@@ -50,6 +57,8 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      */
     public function initialize( eZMemcachedClusterOptions $options )
     {
+        $this->options = $options;
+
         if ( $options->usePersistentConnection && $options->connectionIdentifier != '' )
             $this->gateway = new Memcached( $options->connectionIdentifier );
         else
