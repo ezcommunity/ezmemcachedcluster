@@ -163,7 +163,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
         {
             $errCode = $this->gateway->getResultCode();
             $errMsg = $this->gateway->getResultMessage();
-            eZDebugSetting::writeWarning (
+            eZDebugSetting::writeWarning(
                 'ezmemcachedcluster-debug',
                 "Memcached error $errCode: $errMsg",
                 __METHOD__
