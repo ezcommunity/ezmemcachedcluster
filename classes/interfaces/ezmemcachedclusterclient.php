@@ -27,6 +27,7 @@ interface eZMemcachedClusterClient
      *
      * @param string $key
      * @return mixed
+     * @throws eZMemcachedException
      */
     public function get( $key );
 
@@ -41,6 +42,7 @@ interface eZMemcachedClusterClient
      *                 - If set to 0, the cached value will never expire
      *
      * @return bool True if key/value pair has been stored properly, false otherwise
+     * @throws eZMemcachedException
      */
     public function set( $key, $value, $ttl );
 
@@ -49,6 +51,7 @@ interface eZMemcachedClusterClient
      *
      * @param string $key
      * @return void
+     * @throws eZMemcachedException
      */
     public function delete( $key );
 
@@ -57,6 +60,7 @@ interface eZMemcachedClusterClient
      *
      * @param int $delay Delay before flushing server, in seconds.
      * @return void
+     * @throws eZMemcachedException
      */
     public function flush( $delay = 0 );
 }

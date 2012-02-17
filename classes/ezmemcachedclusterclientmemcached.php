@@ -102,6 +102,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *
      * @param string $key
      * @return mixed
+     * @throws eZMemcachedException
      */
     public function get( $key )
     {
@@ -130,6 +131,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *                 - If set to 0, the cached value will never expire
      *
      * @return bool
+     * @throws eZMemcachedException
      */
     public function set( $key, $value, $ttl )
     {
@@ -168,6 +170,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *
      * @param string $key
      * @return void
+     * @throws eZMemcachedException
      */
     public function delete( $key )
     {
@@ -179,6 +182,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *
      * @param int $delay Delay before flushing server, in seconds.
      * @return void
+     * @throws eZMemcachedException
      */
     public function flush( $delay = 0 )
     {
