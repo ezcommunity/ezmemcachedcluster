@@ -155,11 +155,16 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
 
         if ( !$success )
         {
+            $errCode = $this->gateway->getResultCode();
+            $errMsg = $this->gateway->getResultMessage();
             eZDebugSetting::writeWarning (
                 'ezmemcachedcluster-debug',
-                "Memcached error {$this->gateway->getResultCode()}: {$this->gateway->getResultMessage()}",
+                "Memcached error $errCode: $errMsg",
                 __METHOD__
             );
+
+            if ( $errCode != Memcached::RES_DATA_EXISTS )
+                throw new eZMemcachedException( $errMsg, $errCode );
         }
 
         return $success;
