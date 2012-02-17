@@ -22,6 +22,15 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
     protected $gateway;
 
     /**
+     * Hash of CAS tokens.
+     * Key is the cached item key, value is the token.
+     *
+     * @see http://fr.php.net/manual/fr/memcached.cas.php
+     * @var float[]
+     */
+    protected $tokens = array();
+
+    /**
      * Constructor.
      * An exception will be thrown if Memcached PECL extension is not installed.
      *
@@ -75,5 +84,95 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
         {
             eZDebug::writeError( 'A problem occurred while adding Memcached servers to client', __METHOD__ );
         }
+    }
+
+    /**
+     * Gets a cached item identified by $key.
+     * Returned value depends on what has been stored previously.
+     * False will be returned if $key has not been found in Memcached backend.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get( $key )
+    {
+        $item = $this->gateway->get( $key, null, $casToken );
+        if ( $item !== false )
+        {
+            $this->tokens[$key] = $casToken;
+            return $item;
+        }
+        else if ( $errCode = $this->gateway->getResultCode() != Memcached::RES_NOTFOUND )
+        {
+            throw new eZMemcachedException( $this->gateway->getResultMessage(), $errCode );
+        }
+
+        return false;
+    }
+
+    /**
+     * Caches an item in Memcached backend
+     *
+     * @param string $key Label for the value to store
+     * @param mixed $value The value you want to store. Can be anything but a resource
+     * @param int $ttl Time to live for this key/value pair. Can be:
+     *                 - A relative value (in seconds), but cannot exceed 30 days
+     *                 - A UNIX timestamp
+     *                 - If set to 0, the cached value will never expire
+     *
+     * @return bool
+     */
+    public function set( $key, $value, $ttl )
+    {
+        if ( !isset( $this->tokens[$key] ) )
+        {
+            $item = $this->get( $key );
+            // If item doesn't exist yet, we need to add it
+            // Using add() instead of set() ensures that the value won't be overwritten
+            // if the item has been created in the meantime
+            // Re-doing a get() allows to fetch and store the CAS token
+            if ( $item === false )
+            {
+                $success = $this->gateway->add( $key, $value, $ttl );
+                $item = $this->get( $key );
+            }
+        }
+        else
+        {
+            $success = $this->gateway->cas( $this->tokens[$key], $key, $value, $ttl );
+        }
+
+        if ( !$success )
+        {
+            eZDebugSetting::writeWarning (
+                'ezmemcachedcluster-debug',
+                "Memcached error {$this->gateway->getResultCode()}: {$this->gateway->getResultMessage()}",
+                __METHOD__
+            );
+        }
+
+        return $success;
+    }
+
+    /**
+     * Deletes a cached item identified by $key
+     *
+     * @param string $key
+     * @return void
+     */
+    public function delete( $key )
+    {
+
+    }
+
+    /**
+     * Flushes all cache from Memcached backend
+     *
+     * @param int $delay Delay before flushing server, in seconds.
+     * @return void
+     */
+    public function flush( $delay = 0 )
+    {
+
     }
 }
