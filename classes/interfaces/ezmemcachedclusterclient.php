@@ -40,7 +40,7 @@ interface eZMemcachedClusterClient
      *                 - A UNIX timestamp
      *                 - If set to 0, the cached value will never expire
      *
-     * @return void
+     * @return bool True if key/value pair has been stored properly, false otherwise
      */
     public function set( $key, $value, $ttl );
 
