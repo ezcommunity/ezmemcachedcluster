@@ -219,4 +219,30 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
             throw new eZMemcachedException( $errMsg, $errCode );
         }
     }
+
+    /**
+     * Adds $value to the map identified by $mapId
+     *
+     * Reading and deleting map items is still done using {@see delete()} and {@see get()}
+     *
+     * @param string $mapId
+     * @param string $value
+     */
+    public function addToMap( $mapId, $value )
+    {
+        $map = $this->get( $mapId );
+
+        if ( $map === false || !is_array( $map ) )
+        {
+            $map = array( $value => true );
+        }
+        else
+        {
+            $map[$value] = true;
+        }
+
+        do {
+            $result = $this->set( $mapId, $value, 0 );
+        } while( $result != true )
+    }
 }

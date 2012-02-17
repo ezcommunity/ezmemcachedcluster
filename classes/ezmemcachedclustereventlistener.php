@@ -99,15 +99,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         // if metadata contain a name trunk, we add the file hash to this nametrunk map in memcache
         if ( $metadata['name_trunk'] && $metadata['name_trunk'] !== $metadata['name'] )
         {
-            $nametrunk = $metadata['name_trunk'];
-            $map = $this->client->get( $nametrunk );
-            if ( $map === false )
-                $map = array();
-            if ( !isset( $map[$nametrunk][$filepathHash] ) )
-            {
-                $map[$nametrunk][$filepathHash] = true;
-                $this->client->set( $nametrunk, $map)
-            }
+            $this->client->addToMap( $metadata['name_trunk'], $filepathHash );
         }
     }
 
@@ -198,5 +190,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
 
         foreach( array_keys( $nametrunkMap ) as $filepathHash )
             $this->client->delete( md5( $filepathHash ) );
+
+        $this->client->delete( $nametrunk );
     }
 }

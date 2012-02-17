@@ -63,4 +63,14 @@ interface eZMemcachedClusterClient
      * @throws eZMemcachedException
      */
     public function flush( $delay = 0 );
+
+    /**
+     * Adds $value to the map identified by $mapId
+     *
+     * Reading and deleting map items is still done using {@see delete()} and {@see get()}
+     *
+     * @param string $mapId
+     * @param string $value
+     */
+    public function addToMap( $mapid, $value );
 }
