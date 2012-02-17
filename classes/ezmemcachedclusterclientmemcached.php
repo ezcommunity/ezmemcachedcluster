@@ -179,7 +179,17 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      */
     public function delete( $key )
     {
-
+        if ( !$this->gateway->delete( $key ) )
+        {
+            $errCode = $this->gateway->getResultCode();
+            $errMsg = $this->gateway->getResultMessage();
+            eZDebugSetting::writeError(
+                'ezmemcachedcluster-debug',
+                "Memcached error $errCode: $errMsg",
+                __METHOD__
+            );
+            throw new eZMemcachedException( $errMsg, $errCode );
+        }
     }
 
     /**
@@ -191,6 +201,16 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      */
     public function flush( $delay = 0 )
     {
-
+        if ( !$this->gateway->flush( $delay ) )
+        {
+            $errCode = $this->gateway->getResultCode();
+            $errMsg = $this->gateway->getResultMessage();
+            eZDebugSetting::writeError(
+                'ezmemcachedcluster-debug',
+                "Memcached error $errCode: $errMsg",
+                __METHOD__
+            );
+            throw new eZMemcachedException( $errMsg, $errCode );
+        }
     }
 }
