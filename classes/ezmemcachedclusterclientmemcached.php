@@ -54,7 +54,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *
      * @param eZMemcachedClusterOptions $options
      * @return void
-     * @throws eZMemcachedException
+     * @throws eZMemcachedException When Memcached gateway finds a problem
      */
     public function initialize( eZMemcachedClusterOptions $options )
     {
@@ -105,7 +105,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *
      * @param string $key
      * @return mixed
-     * @throws eZMemcachedException
+     * @throws eZMemcachedException When Memcached gateway finds a problem (anything but Memcached::RES_NOTFOUND)
      */
     public function get( $key )
     {
@@ -134,8 +134,8 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *                 - A UNIX timestamp
      *                 - If set to 0, the cached value will never expire
      *
-     * @return bool
-     * @throws eZMemcachedException
+     * @return bool True if everything went OK, False otherwise (e.g. key already modified)
+     * @throws eZMemcachedException When Memcached gateway finds a problem (anything but Memcached::RES_DATA_EXISTS)
      */
     public function set( $key, $value, $ttl )
     {
@@ -174,7 +174,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *
      * @param string $key
      * @return void
-     * @throws eZMemcachedException
+     * @throws eZMemcachedException When Memcached gateway finds a problem
      */
     public function delete( $key )
     {
@@ -194,7 +194,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      *
      * @param int $delay Delay before flushing server, in seconds.
      * @return void
-     * @throws eZMemcachedException
+     * @throws eZMemcachedException When Memcached gateway finds a problem
      */
     public function flush( $delay = 0 )
     {
