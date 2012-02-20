@@ -33,19 +33,28 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     private $logger;
 
-    public function __construct( eZClusterEventLogger $logger )
+    /**
+     * Configuration handler
+     *
+     * @var eZMemcachedClusterConfigurationHandler
+     */
+    private $configurationHandler;
+
+    /**
+     * Constructor
+     *
+     * @param eZClusterEventLogger $logger Object used for logging errors.
+     * @param eZMemcachedClusterConfigurationHandler $confHandler Configuration handler. If not provided, {@link eZMemcachedClusterConfigurationIni} will be used.
+     */
+    public function __construct( eZClusterEventLogger $logger, eZMemcachedClusterConfigurationHandler $confHandler = null )
     {
         $this->logger = $logger;
-        $this->memcacheINI = eZINI::instance( 'memcachedcluster.ini' );
-        $this->client = eZExtension::getHandlerClass(
-            new ezpExtensionOptions(
-                array(
-                    'iniFile'     => 'memcachedcluster.ini',
-                    'iniSection'  => 'ClientSettings',
-                    'iniVariable' => 'BackendClient'
-                )
-            )
-        );
+        if ( isset( $confHandler ) )
+            $this->configurationHandler = $confHandler;
+        else
+            $this->configurationHandler = new eZMemcachedClusterConfigurationIni;
+
+        $this->client = $this->configurationHandler->getClient();
     }
 
     /**
@@ -57,22 +66,9 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function initialize()
     {
-        $serverOptions = $this->memcacheINI->group( 'ServerSettings' );
-        $options = new eZMemcachedClusterOptions;
-        $options->servers = $serverOptions['Servers'];
-        $options->connectTimeout = (int)$serverOptions['ConnectionTimeout'];
-        $options->usePersistentConnection = $serverOptions['UsePersistentConnection'] === 'enabled';
-        if ( $options->usePersistentConnection )
-            $options->connectionIdentifier = $serverOptions['PersistentConnectionIdentifier'];
-        $options->useCompression = $serverOptions['UseCompression'] === 'enabled';
-        $options->prefixKey = $serverOptions['PrefixKey'];
-        $options->useBuffer = $serverOptions['UseBuffer'] === 'enabled';
-        $options->useBinaryProtocol = $serverOptions['UseBinaryProtocol'] === 'enabled';
-        $options->defaultCacheTTL = (int)$this->memcacheINI->variable( 'ClientSettings' , 'CacheTTL' );
-
         try
         {
-            $this->client->initialize( $options );
+            $this->client->initialize( $this->configurationHandler->getOptions() );
         }
         catch( eZMemcachedException $e )
         {
