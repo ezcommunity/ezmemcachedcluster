@@ -224,8 +224,10 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
             $map[$value] = true;
         }
 
-        do {
+        do
+        {
             $result = $this->set( $mapId, $map, 0 );
-        } while( $result != true );
+        }
+        while( $result != true );
     }
 }
