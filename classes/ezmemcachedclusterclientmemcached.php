@@ -184,6 +184,9 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
             $errMsg = $this->gateway->getResultMessage();
             throw new eZMemcachedException( $errMsg, $errCode );
         }
+
+        if ( isset( $this->tokens[$key] ) )
+            unset( $this->tokens[$key] );
     }
 
     /**
@@ -201,6 +204,8 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
             $errMsg = $this->gateway->getResultMessage();
             throw new eZMemcachedException( $errMsg, $errCode );
         }
+
+        $this->tokens = array();
     }
 
     /**
