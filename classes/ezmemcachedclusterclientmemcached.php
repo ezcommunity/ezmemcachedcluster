@@ -206,7 +206,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
     /**
      * Adds $value to the map identified by $mapId
      *
-     * Reading and deleting map items is still done using {@see delete()} and {@see get()}
+     * Reading and deleting map items is still done using {@link delete()} and {@link get()}
      *
      * @param string $mapId
      * @param string $value
