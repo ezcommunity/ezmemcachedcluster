@@ -268,4 +268,20 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
             $this->logger->logError( $e->getMessage(), __METHOD__ );
         }
     }
+
+    /**
+     * Flush method.
+     * Useful for cache purging.
+     */
+    public function flush()
+    {
+        try
+        {
+            $this->client->flush();
+        }
+        catch( eZMemcachedException $e )
+        {
+            $this->logger->logError( $e->getMessage(), __METHOD__ );
+        }
+    }
 }
