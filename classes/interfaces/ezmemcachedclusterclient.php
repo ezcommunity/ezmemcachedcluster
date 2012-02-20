@@ -45,7 +45,7 @@ interface eZMemcachedClusterClient
      * @return bool True if key/value pair has been stored properly, false otherwise
      * @throws eZMemcachedException
      */
-    public function set( $key, $value, $ttl );
+    public function set( $key, $value, $ttl = null );
 
     /**
      * Deletes a cached item identified by $key

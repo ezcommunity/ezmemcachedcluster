@@ -137,8 +137,11 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      * @return bool True if everything went OK, False otherwise (e.g. key already modified)
      * @throws eZMemcachedException When Memcached gateway finds a problem (anything but Memcached::RES_DATA_EXISTS)
      */
-    public function set( $key, $value, $ttl )
+    public function set( $key, $value, $ttl = null )
     {
+        if ( $ttl == null )
+            $ttl = $this->options->defaultCacheTTL;
+
         if ( !isset( $this->tokens[$key] ) )
         {
             $item = $this->get( $key );

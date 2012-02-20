@@ -68,6 +68,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         $options->prefixKey = $serverOptions['PrefixKey'];
         $options->useBuffer = $serverOptions['UseBuffer'] === 'enabled';
         $options->useBinaryProtocol = $serverOptions['UseBinaryProtocol'] === 'enabled';
+        $options->defaultCacheTTL = (int)$this->memcacheINI->variable( 'ClientSettings' , 'CacheTTL' );
 
         try
         {

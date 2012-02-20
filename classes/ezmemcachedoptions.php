@@ -69,4 +69,11 @@ class eZMemcachedClusterOptions
      * @var int
      */
     public $connectTimeout;
+
+    /**
+     * Default TTL for items put in Memcached, in seconds
+     *
+     * @var int
+     */
+    public $defaultCacheTTL;
 }
