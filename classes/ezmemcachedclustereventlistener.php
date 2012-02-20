@@ -69,7 +69,15 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         $options->useBuffer = $serverOptions['UseBuffer'] === 'enabled';
         $options->useBinaryProtocol = $serverOptions['UseBinaryProtocol'] === 'enabled';
 
-        $this->client->initialize( $options );
+        try
+        {
+            $this->client->initialize( $options );
+        }
+        catch( eZMemcachedException $e )
+        {
+            $this->logger->error( $e->getMessage() );
+            throw $e;
+        }
     }
 
     /**
@@ -90,7 +98,15 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function loadMetadata( $filepath )
     {
-        return $this->client->get( md5( $filepath ) );
+        try
+        {
+            $metadata = $this->client->get( md5( $filepath ) );
+        }
+        catch ( eZMemcachedException $e )
+        {
+            $this->logger->error( $e->getMessage() );
+            return false;
+        }
     }
 
     /**
@@ -102,13 +118,20 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
     public function storeMetadata( array $metadata )
     {
         $filepathHash = md5( $metadata['name'] );
-        $this->client->set( $filepathHash, $metadata );
-
-        // if metadata contain a name trunk, we add the file hash to this nametrunk map in memcache
-        if ( $metadata['name_trunk'] && $metadata['name_trunk'] !== $metadata['name'] )
+        try
         {
-            $this->client->addToMap( $metadata['name_trunk'], $filepathHash );
+            $this->client->set( $filepathHash, $metadata );
+            // if metadata contain a name trunk, we add the file hash to this nametrunk map in memcache
+            if ( $metadata['name_trunk'] && $metadata['name_trunk'] !== $metadata['name'] )
+            {
+                $this->client->addToMap( $metadata['name_trunk'], $filepathHash );
+            }
         }
+        catch( eZMemcachedException $e )
+        {
+            $this->logger->error( $e->getMessage() );
+        }
+
     }
 
     /**
@@ -124,12 +147,20 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function fileExists( $filepath )
     {
-        $metadata = $this->client->get( $filepath );
+        try
+        {
+            $metadata = $this->client->get( $filepath );
+            if ( $metadata === false )
+                return false;
 
-        if ( $metadata === false )
+            return array( 'name' => $metadata['name'], 'mtime' => $metadata['mtime'] );
+        }
+        catch( eZMemcachedException $e )
+        {
+            $this->logger->error( $e->getMessage() );
             return false;
+        }
 
-        return array( 'name' => $metadata['name'], 'mtime' => $metadata['mtime'] );
     }
 
     /**
@@ -140,7 +171,14 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     public function deleteFile( $filepath )
     {
-        $this->client->delete( md5( $filepath ) );
+        try
+        {
+            $this->client->delete( md5( $filepath ) );
+        }
+        catch( eZMemcachedException $e )
+        {
+            $this->logger->error( $e->getMessage() );
+        }
     }
 
     /**
@@ -153,7 +191,14 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
     {
         // We don't have an index in memcache that allows for such queries
         // The only way is therefore to fully flush memcache
-        $this->client->flush();
+        try
+        {
+            $this->client->flush();
+        }
+        catch( Exception $e )
+        {
+            $this->logger->error( $e->getMessage() );
+        }
     }
 
     /**
@@ -166,7 +211,14 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
     {
         // We don't have an index in memcache that allows for such queries
         // The only way is therefore to fully flush memcache
-        $this->client->flush();
+        try
+        {
+            $this->client->flush();
+        }
+        catch( eZMemcachedException $e )
+        {
+            $this->logger->error( $e->getMessage() );
+        }
     }
 
     /**
@@ -181,7 +233,14 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
     {
         // We don't have an index in memcache that allows for such queries
         // The only way is therefore to fully flush memcache
-        $this->client->flush();
+        try
+        {
+            $this->client->flush();
+        }
+        catch( eZMemcachedException $e )
+        {
+            $this->logger->error( $e->getMessage() );
+        }
     }
 
     /**
@@ -196,9 +255,16 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         if ( $nametrunkMap === false || !is_array( $nametrunkMap ) )
             return;
 
-        foreach( array_keys( $nametrunkMap ) as $filepathHash )
-            $this->client->delete( md5( $filepathHash ) );
+        try
+        {
+            foreach( array_keys( $nametrunkMap ) as $filepathHash )
+                $this->client->delete( md5( $filepathHash ) );
 
-        $this->client->delete( $nametrunk );
+            $this->client->delete( $nametrunk );
+        }
+        catch( eZMemcachedException $e )
+        {
+            $this->logger->error( $e->getMessage() );
+        }
     }
 }
