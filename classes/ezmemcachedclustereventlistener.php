@@ -64,7 +64,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         $options->usePersistentConnection = $serverOptions['UsePersistentConnection'] === 'enabled';
         if ( $options->usePersistentConnection )
             $options->connectionIdentifier = $serverOptions['PersistentConnectionIdentifier'];
-        $options->useCompression = $serverOptions['UserCompression'] === 'enabled';
+        $options->useCompression = $serverOptions['UseCompression'] === 'enabled';
         $options->prefixKey = $serverOptions['PrefixKey'];
         $options->useBuffer = $serverOptions['UseBuffer'] === 'enabled';
         $options->useBinaryProtocol = $serverOptions['UseBinaryProtocol'] === 'enabled';
