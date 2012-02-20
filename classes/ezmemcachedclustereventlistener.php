@@ -101,7 +101,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
     {
         try
         {
-            $metadata = $this->client->get( md5( $filepath ) );
+            return $this->client->get( md5( $filepath ) );
         }
         catch ( eZMemcachedException $e )
         {
