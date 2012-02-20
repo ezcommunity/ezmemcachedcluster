@@ -76,7 +76,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch( eZMemcachedException $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
             throw $e;
         }
     }
@@ -105,7 +105,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch ( eZMemcachedException $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
             return false;
         }
     }
@@ -130,7 +130,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch( eZMemcachedException $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
         }
 
     }
@@ -158,7 +158,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch( eZMemcachedException $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
             return false;
         }
 
@@ -178,7 +178,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch( eZMemcachedException $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
         }
     }
 
@@ -198,7 +198,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch( Exception $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
         }
     }
 
@@ -218,7 +218,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch( eZMemcachedException $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
         }
     }
 
@@ -240,7 +240,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch( eZMemcachedException $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
         }
     }
 
@@ -265,7 +265,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
         }
         catch( eZMemcachedException $e )
         {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->logError( $e->getMessage() );
         }
     }
 }
