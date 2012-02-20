@@ -26,8 +26,16 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      */
     private $memcacheINI;
 
-    public function __construct()
+    /**
+     * Logger to use
+     *
+     * @var eZClusterEventLogger
+     */
+    private $logger;
+
+    public function __construct( eZClusterEventLogger $logger )
     {
+        $this->logger = $logger;
         $this->memcacheINI = eZINI::instance( 'memcachedcluster.ini' );
         $this->client = eZExtension::getHandlerClass(
             new ezpExtensionOptions(
