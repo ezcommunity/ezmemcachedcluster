@@ -226,6 +226,8 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
         }
         else
         {
+            if ( isset( $map[$value] ) )
+                return;
             $map[$value] = true;
         }
 
