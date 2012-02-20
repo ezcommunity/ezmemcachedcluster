@@ -17,6 +17,7 @@ interface eZMemcachedClusterClient
      *
      * @param eZMemcachedClusterOptions $options
      * @return void
+     * @throws eZMemcachedException
      */
     public function initialize( eZMemcachedClusterOptions $options );
 
