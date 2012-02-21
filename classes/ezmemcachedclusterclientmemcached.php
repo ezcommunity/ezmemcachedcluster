@@ -45,7 +45,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      */
     public function __construct()
     {
-        if ( !ezcBaseFeatures::hasExtensionSupport( 'memcached' ) )
+        if ( !extension_loaded( 'memcached' ) )
             throw new RuntimeException( __CLASS__ . 'needs "memcached" extension to be installed. See http://php.net/memcached' );
     }
 

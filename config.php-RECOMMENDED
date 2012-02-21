@@ -1,0 +1,26 @@
+<?php
+/**
+ * File containing the recommended memcached clustter configuration
+ *
+ * @copyright Copyright (C) 1999-2012 eZ Systems AS. All rights reserved.
+ * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @version //autogentag//
+ *
+ * DO NOT MODIFY THIS FILE.
+ * Either copy the contents to your own config.php, or create a copy that you include from config.php.
+ */
+
+require 'extension/ezmemcachedcluster/autoloader.php';
+
+// instanciating the autoloader is enough, no need to assign it to a variable or call anything
+new eZMemcachedAutoloader;
+
+$options = new eZMemcachedClusterOptions();
+$options->servers[] = 'localhost:11211';
+
+$memcachedConfiguration = new eZMemcachedClusterConfigurationManual(
+    $options, new eZMemcachedClusterClientMemcached()
+);
+eZMemcachedClusterGatewayMySQLi::setConfiguration( $memcachedConfiguration );
+
+?>
