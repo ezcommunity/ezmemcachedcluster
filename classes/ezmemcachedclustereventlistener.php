@@ -248,8 +248,10 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
 
         try
         {
-            foreach( array_keys( $nametrunkMap ) as $filepathHash )
+            foreach ( array_keys( $nametrunkMap ) as $filepathHash )
+            {
                 $this->client->delete( md5( $filepathHash ) );
+            }
 
             $this->client->delete( $nametrunk );
         }
