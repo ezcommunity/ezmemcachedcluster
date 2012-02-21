@@ -20,13 +20,6 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
     private $client;
 
     /**
-     * eZINI instance for memcachedcluster.ini
-     *
-     * @var eZINI
-     */
-    private $memcacheINI;
-
-    /**
      * Logger to use
      *
      * @var eZClusterEventLogger
@@ -147,7 +140,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
     {
         try
         {
-            $metadata = $this->client->get( $filepath );
+            $metadata = $this->client->get( md5( $filepath ) );
             if ( $metadata === false )
                 return false;
 
