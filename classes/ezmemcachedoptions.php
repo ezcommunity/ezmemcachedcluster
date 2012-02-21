@@ -17,14 +17,14 @@ class eZMemcachedClusterOptions
      *
      * @var bool
      */
-    public $usePersistentConnection = false;
+    public $usePersistentConnection = true;
 
     /**
      * Identifier to use in order to set a persistent connection
      *
      * @var string
      */
-    public $connectionIdentifier;
+    public $connectionIdentifier = 'ezcluster';
 
     /**
      * Array of Memcached servers to connect to, in the form <host>:<port>.
@@ -32,7 +32,7 @@ class eZMemcachedClusterOptions
      *
      * @var array
      */
-    public $servers;
+    public $servers = array();
 
     /**
      * Use compression or not while communicating with Memcached server
@@ -46,7 +46,7 @@ class eZMemcachedClusterOptions
      *
      * @var string
      */
-    public $prefixKey;
+    public $prefixKey = 'ezcluster-';
 
     /**
      * Buffered I/O usage.
@@ -68,12 +68,12 @@ class eZMemcachedClusterOptions
      *
      * @var int
      */
-    public $connectTimeout;
+    public $connectTimeout = 1000;
 
     /**
      * Default TTL for items put in Memcached, in seconds
      *
      * @var int
      */
-    public $defaultCacheTTL;
+    public $defaultCacheTTL = 3600;
 }
