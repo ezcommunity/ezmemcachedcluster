@@ -144,7 +144,7 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
             if ( $metadata === false )
                 return false;
 
-            return array( 'name' => $metadata['name'], 'mtime' => $metadata['mtime'] );
+            return array( $metadata['name'], $metadata['mtime'] );
         }
         catch( eZMemcachedException $e )
         {

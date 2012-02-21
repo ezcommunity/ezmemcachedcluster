@@ -214,8 +214,8 @@ class eZMemcachedClusterEventListenerTest extends ezpDatabaseTestCase
         $listener = new eZMemcachedClusterEventListener( $this->logger, $this->confHandler );
         self::assertSame(
             array(
-                'name'  => $metadata['name'],
-                'mtime' => $metadata['mtime']
+                $metadata['name'],
+                $metadata['mtime']
             ),
             $listener->fileExists( __METHOD__ )
         );
