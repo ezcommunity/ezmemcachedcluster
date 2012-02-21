@@ -46,11 +46,11 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
      * @param eZClusterEventLogger $logger Object used for logging errors.
      * @param eZMemcachedClusterConfigurationHandler $confHandler Configuration handler. If not provided, {@link eZMemcachedClusterConfigurationIni} will be used.
      */
-    public function __construct( eZClusterEventLogger $logger, eZMemcachedClusterConfigurationHandler $confHandler = null )
+    public function __construct( eZClusterEventLogger $logger, eZMemcachedClusterConfigurationHandler $configurationHandler = null )
     {
         $this->logger = $logger;
-        if ( isset( $confHandler ) )
-            $this->configurationHandler = $confHandler;
+        if ( isset( $configurationHandler ) )
+            $this->configurationHandler = $configurationHandler;
         else
             $this->configurationHandler = new eZMemcachedClusterConfigurationIni;
 
