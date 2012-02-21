@@ -22,5 +22,6 @@ $memcachedConfiguration = new eZMemcachedClusterConfigurationManual(
     $options, new eZMemcachedClusterClientMemcached()
 );
 eZMemcachedClusterGatewayMySQLi::setConfiguration( $memcachedConfiguration );
+ezpClusterGateway::setGatewayClass( 'eZMemcachedClusterGatewayMySQLi' );
 
 ?>
