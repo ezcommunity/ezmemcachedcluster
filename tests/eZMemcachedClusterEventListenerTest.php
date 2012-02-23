@@ -256,11 +256,53 @@ class eZMemcachedClusterEventListenerTest extends ezpDatabaseTestCase
      */
     public function testDeleteFile()
     {
-        $this->clientMock->expects( $this->once() )
+        $i = 0;
+        $filename = __METHOD__;
+        $hash = md5( $filename );
+        $nameTrunk = 'i/am/a/nametrunk';
+
+        $this->clientMock->expects( $this->at( $i++ ) )
+                         ->method( 'get' )
+                         ->with( $hash )
+                         ->will( $this->returnValue(
+                                    array(
+                                        'name' => $filename,
+                                        'name_hash' => $hash,
+                                        'name_trunk' => $nameTrunk
+                                    )
+                                 )
+                             );
+        $this->clientMock->expects( $this->at( $i++ ) )
                          ->method( 'delete' )
-                         ->with( $this->equalTo( md5( __METHOD__ ) ) );
+                         ->with( $this->equalTo( $hash ) );
+        $this->clientMock->expects( $this->at( $i++ ) )
+                         ->method( 'get' )
+                         ->with( $this->equalTo( $nameTrunk ) )
+                         ->will( $this->returnValue( array( $hash => true ) ) );
+
+        // We will emulate concurrency in write. So the listener will try to re-fetch and re-set the map
+        $this->clientMock->expects( $this->at( $i++ ) )
+                         ->method( 'set' )
+                         // Nametrunk map should be empty since the hash should have been removed from it
+                         ->with( $this->equalTo( $nameTrunk ), array(), 0 )
+                         ->will( $this->returnValue( false ) );
+        $this->clientMock->expects( $this->at( $i++ ) )
+                         ->method( 'get' )
+                         ->with( $this->equalTo( $nameTrunk ) )
+                         ->will( $this->returnValue(
+                                    array(
+                                        $hash => true,
+                                        'anotherhash' => true
+                                    )
+                                 )
+                             );
+        $this->clientMock->expects( $this->at( $i++ ) )
+                         ->method( 'set' )
+                         // Nametrunk map should be empty since the hash should have been removed from it
+                         ->with( $this->equalTo( $nameTrunk ), array( 'anotherhash' => true ), 0 )
+                         ->will( $this->returnValue( true ) );
         $listener = new eZMemcachedClusterEventListener( $this->logger, $this->confHandler );
-        $listener->deleteFile( __METHOD__ );
+        $listener->deleteFile( $filename );
     }
 
     /**

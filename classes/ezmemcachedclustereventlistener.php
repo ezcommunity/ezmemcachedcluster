@@ -164,7 +164,30 @@ class eZMemcachedClusterEventListener implements eZClusterEventListener
     {
         try
         {
-            $this->client->delete( md5( $filepath ) );
+            $hash = md5( $filepath );
+            $metadata = $this->client->get( $hash );
+            $this->client->delete( $hash );
+            // Now delete $hash from nametrunk map
+            if ( is_array( $metadata ) && isset( $metadata['name_trunk'] ) )
+            {
+                $map = $this->client->get( $metadata['name_trunk'] );
+                if ( is_array( $map ) )
+                {
+                    unset( $map[$hash] );
+                    $result = $this->client->set( $metadata['name_trunk'], $map, 0 );
+                    // There might be a lock due to concurrent set requests, so we keep on trying if needed:
+                    // 1. Get the map again
+                    // 2. Update it and try to update it.
+                    while ( $result != true )
+                    {
+                        $map = $this->client->get( $metadata['name_trunk'] );
+                        if ( !is_array( $map ) || !isset( $map[$hash] ) )
+                            break;
+                        unset( $map[$hash] );
+                        $result = $this->client->set( $metadata['name_trunk'], $map, 0 );
+                    }
+                }
+            }
         }
         catch( eZMemcachedException $e )
         {
