@@ -242,10 +242,16 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
             $map[$value] = true;
         }
 
-        do
+        // $result will be false if there is a write lock on $mapId key in Memcached
+        // If so, we'll try to get the map again and add $value to it
+        $result = $this->set( $mapId, $map, 0 );
+        while ( $result != true )
         {
+            $map = $this->get( $mapId );
+            if ( isset( $map[$value] ) )
+                break;
+            $map[$value] = true;
             $result = $this->set( $mapId, $map, 0 );
         }
-        while( $result != true );
     }
 }
