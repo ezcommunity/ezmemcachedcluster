@@ -139,6 +139,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
      */
     public function set( $key, $value, $ttl = null )
     {
+        $success = false;
         if ( $ttl == null )
             $ttl = $this->options->defaultCacheTTL;
 
@@ -153,6 +154,12 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
             {
                 $success = $this->gateway->add( $key, $value, $ttl );
                 $item = $this->get( $key );
+            }
+            // An item exists but we didn't have the token yet
+            // Now we have it as it has been retrieved by $this->get(), so we try to update with cas()
+            else
+            {
+                $success = $this->gateway->cas( $this->tokens[$key], $key, $value, $ttl );
             }
         }
         else

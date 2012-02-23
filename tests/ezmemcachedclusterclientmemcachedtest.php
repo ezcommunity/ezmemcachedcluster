@@ -103,6 +103,7 @@ class eZMemcachedClusterClientMemcachedTest extends ezpDatabaseTestCase
         $options->servers = array( 'localhost:11211' );
         $options->usePersistentConnection = true;
         $options->connectionIdentifier = 'foobarconnection';
+        $options->prefixKey = null;
         $this->client->initialize( $options );
     }
 
