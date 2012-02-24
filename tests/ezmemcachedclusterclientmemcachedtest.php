@@ -18,23 +18,22 @@ class eZMemcachedClusterClientMemcachedTest extends ezpDatabaseTestCase
     /**
      * @var eZMemcachedClusterClientMemcached
      */
-    private $client;
+    protected $client;
 
     /**
      * Memcached gateway
      *
      * @var Memcached
      */
-    private $gateway;
+    protected $gateway;
 
-    private $keys = array();
+    protected $keys = array();
 
     protected function setUp()
     {
         parent::setUp();
-        $this->client = new eZMemcachedClusterClientMemcached;
-        $this->gateway = new Memcached;
-        $this->gateway->addServer( 'localhost', 11211 );
+        $this->client = $this->getMemcachedClient();
+        $this->gateway = $this->getMemcachedGateway();
 
         $obj = new stdClass;
         $obj->foo = 'bar';
@@ -55,6 +54,24 @@ class eZMemcachedClusterClientMemcachedTest extends ezpDatabaseTestCase
         $this->gateway->flush();
         unset( $this->client );
         parent::tearDown();
+    }
+
+    /**
+     * @return eZMemcachedClusterClientMemcached
+     */
+    protected function getMemcachedClient()
+    {
+        return new eZMemcachedClusterClientMemcached;
+    }
+
+    /**
+     * @return Memcache
+     */
+    protected function getMemcachedGateway()
+    {
+        $gateway = new Memcached;
+        $gateway->addServer( 'localhost', 11211 );
+        return $gateway;
     }
 
     /**
@@ -97,7 +114,7 @@ class eZMemcachedClusterClientMemcachedTest extends ezpDatabaseTestCase
     /**
      * Shorthand method to initialize Memcached client
      */
-    private function initializeClient()
+    protected function initializeClient()
     {
         $options = new eZMemcachedClusterOptions;
         $options->servers = array( 'localhost:11211' );
