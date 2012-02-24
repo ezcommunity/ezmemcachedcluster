@@ -7,6 +7,7 @@ This extension adds cluster events support with [Memcached](http://memcached.org
 
 - A Memcached server
 - [Memcached PECL extension](http://php.net/memcached) for PHP
+  ([Memcache PECL extension](http://php.net/memcache) is also an option)
 - eZ Publish **Etna** (4.7), with DFS cluster enabled using MySQLi.
 
 
@@ -21,6 +22,9 @@ This extension adds cluster events support with [Memcached](http://memcached.org
 ClusterEvents=enabled
 Listener=eZMemcachedClusterEventListener
 ```
+
+### Using Memcached PECL extension
+[Memcached PECL extension](http://php.net/memcached) is currently the recommended way for communication with Memcached server.
 
 - Make an override of `memcachedcluster.ini` in `settings/override` and customize default values (like adding some Memcached servers).
   Placing it in the global override directory is mandatory to workaround cluster limitations about very early loading.
@@ -65,7 +69,35 @@ eZMemcachedClusterGatewayMySQLi::setConfiguration( $memcachedConfiguration );
 ezpClusterGateway::setGatewayClass( 'eZMemcachedClusterGatewayMySQLi' );
 ```
 
-- Start your Memcached server(s)
+### Using Memcache PECL extension
+If you prefer to use [Memcache](http://php.net/memcache) (though not recommended)
+
+In addition to previous settings explained for Memcached client, you will need to add the following in `settings/override/memcachedcluster.ini.append.php`:
+
+```ini
+[ClientSettings]
+BackendClient=eZMemcachedClusterClientMemcache
+```
+
+And in `config.cluster.php`, replace:
+
+```php
+$memcachedConfiguration = new eZMemcachedClusterConfigurationManual(
+    $options, new eZMemcachedClusterClientMemcached()
+);
+```
+
+By:
+
+```php
+<?php
+$memcachedConfiguration = new eZMemcachedClusterConfigurationManual(
+    $options, new eZMemcachedClusterClientMemcache()
+);
+```
+
+### Memcached server backend
+- Start your Memcached server(s) with your preferred options.
 
 If everything is OK, cluster queries count appearing in the debug output should be drastically reduced once cache has been generated
 (no query most of the time).
