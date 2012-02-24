@@ -27,7 +27,8 @@ Listener=eZMemcachedClusterEventListener
 [Memcached PECL extension](http://php.net/memcached) is currently the recommended way for communication with Memcached server.
 
 - Make an override of `memcachedcluster.ini` in `settings/override` and customize default values (like adding some Memcached servers).
-  Placing it in the global override directory is mandatory to workaround cluster limitations about very early loading.
+  Placing it in the global override directory is mandatory to workaround cluster limitations about very early loading.<br />
+  **IMPORTANT: Be sure to have all the default values in `settings/override/memcachedcluster.ini.append.php`** (make basically a copy of all default values)
 
 *Example:*
 
