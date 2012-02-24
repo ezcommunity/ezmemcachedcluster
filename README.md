@@ -73,7 +73,7 @@ ezpClusterGateway::setGatewayClass( 'eZMemcachedClusterGatewayMySQLi' );
 ### Using Memcache PECL extension
 If you prefer to use [Memcache](http://php.net/memcache) (though not recommended)
 
-In addition to previous settings explained for Memcached client, you will need to add the following in `settings/override/memcachedcluster.ini.append.php`:
+In addition to previous settings explained for Memcached client, you will need to change the following in `settings/override/memcachedcluster.ini.append.php`:
 
 ```ini
 [ClientSettings]
