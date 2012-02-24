@@ -15,6 +15,7 @@ class eZMemcachedClusterTestSuite extends ezpDatabaseTestSuite
         $this->setName( "eZMemcachedCluster Test Suite" );
 
         $this->addTestSuite( 'eZMemcachedClusterClientMemcachedTest' );
+        $this->addTestSuite( 'eZMemcachedClusterClientMemcacheTest' );
         $this->addTestSuite( 'eZMemcachedClusterEventListenerTest' );
     }
 
