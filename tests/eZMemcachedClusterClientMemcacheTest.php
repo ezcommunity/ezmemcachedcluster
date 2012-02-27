@@ -85,6 +85,7 @@ class eZMemcachedClusterClientMemcacheTest extends eZMemcachedClusterClientMemca
         $options = new eZMemcachedClusterOptions;
         $options->servers = array( 'localhost:11211' );
         $options->usePersistentConnection = true;
+        $options->prefixKey = null;
         $this->client->initialize( $options );
     }
 
