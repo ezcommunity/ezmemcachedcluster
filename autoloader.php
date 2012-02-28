@@ -14,6 +14,7 @@ class eZMemcachedAutoloader
       'eZMemcachedClusterCacheClear'                   => 'extension/ezmemcachedcluster/classes/ezmemcachedclustercacheclear.php',
       'eZMemcachedClusterClient'                       => 'extension/ezmemcachedcluster/classes/interfaces/ezmemcachedclusterclient.php',
       'eZMemcachedClusterClientMemcached'              => 'extension/ezmemcachedcluster/classes/ezmemcachedclusterclientmemcached.php',
+      'eZMemcachedClusterClientMemcache'               => 'extension/ezmemcachedcluster/classes/ezmemcachedclusterclientmemcache.php',
       'eZMemcachedClusterConfigurationHandler'         => 'extension/ezmemcachedcluster/classes/interfaces/ezmemcachedclusterconfigurationhandler.php',
       'eZMemcachedClusterConfigurationIni'             => 'extension/ezmemcachedcluster/classes/ezmemcachedclusterconfigurationini.php',
       'eZMemcachedClusterConfigurationManual'          => 'extension/ezmemcachedcluster/classes/ezmemcachedclusterconfigurationmanual.php',
