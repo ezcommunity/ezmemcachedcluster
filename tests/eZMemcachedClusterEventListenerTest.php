@@ -372,12 +372,11 @@ class eZMemcachedClusterEventListenerTest extends ezpDatabaseTestCase
                          ->method( 'get' )
                          ->with( $this->equalTo( $nametrunk ) )
                          ->will( $this->returnValue( $expectedHashes ) );
-        foreach ( $expectedHashes as $hash )
+        foreach ( $expectedHashes as $hash => $value )
         {
-            $this->clientMock->expects( $this->at( $i ) )
+            $this->clientMock->expects( $this->at( $i++ ) )
                              ->method( 'delete' )
                              ->with( $this->equalTo( $hash ) );
-            $i++;
         }
 
         $this->clientMock->expects( $this->at( $i++ ) )
