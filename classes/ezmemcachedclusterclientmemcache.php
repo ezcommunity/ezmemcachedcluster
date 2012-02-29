@@ -38,7 +38,7 @@ class eZMemcachedClusterClientMemcache implements eZMemcachedClusterClient
      *
      * @var int
      */
-    private $compressionFlag;
+    private $compressionFlag = 0;
 
     /**
      * Constructor.
@@ -95,7 +95,10 @@ class eZMemcachedClusterClientMemcache implements eZMemcachedClusterClient
      */
     public function get( $key )
     {
-        return $this->gateway->get( $this->options->prefixKey . $key, $this->compressionFlag );
+        return $this->gateway->get(
+            $this->options->prefixKey . $key,
+            $this->compressionFlag & MEMCACHE_COMPRESSED
+        );
     }
 
     /**
@@ -118,13 +121,25 @@ class eZMemcachedClusterClientMemcache implements eZMemcachedClusterClient
     public function set( $key, $value, $ttl = null )
     {
         $lockKey = "writeLock:$key";
-        $notAlreadyLocked = $this->gateway->add( $this->options->prefixKey . $lockKey, 1, null, self::LOCK_TIMEOUT );
+        $notAlreadyLocked = $this->gateway->add(
+            $this->options->prefixKey . $lockKey,
+            1,
+            $this->compressionFlag & MEMCACHE_COMPRESSED,
+            self::LOCK_TIMEOUT
+        );
         if ( $notAlreadyLocked )
         {
             if ( $ttl == null )
                 $ttl = $this->options->defaultCacheTTL;
 
-            if ( !$this->gateway->set( $this->options->prefixKey . $key, $value, $this->compressionFlag, $ttl ) )
+            if (
+                !$this->gateway->set(
+                    $this->options->prefixKey . $key,
+                    $value,
+                    $this->compressionFlag & MEMCACHE_COMPRESSED,
+                    $ttl
+                )
+            )
                 throw new eZMemcachedException( "An error occurred while trying to set value '$value' to key '$key'" );
 
             // Remove lock
