@@ -5,9 +5,10 @@ This extension adds cluster events support with [Memcached](http://memcached.org
 
 ## Requirements
 
-- A Memcached server
-- [Memcached PECL extension](http://php.net/memcached) for PHP
-  ([Memcache PECL extension](http://php.net/memcache) is also an option)
+- A Memcached server (*1.4.4 or higher*)
+- [Memcached PECL extension](http://php.net/memcached) (*1.0.2 or higher*) - **recommended**<br />
+  OR<br />
+  [Memcache PECL extension](http://php.net/memcache) (*2.2.6 or higher*, **3.0.5** *recommended*)
 - eZ Publish **Etna** (4.7), with DFS cluster enabled using MySQLi.
 
 
