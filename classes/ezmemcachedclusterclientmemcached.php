@@ -110,7 +110,7 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
     public function get( $key )
     {
         $item = $this->gateway->get( $key, null, $casToken );
-        if ( $item !== false )
+        if ( $item !== false && $item !== null )
         {
             $this->tokens[$key] = $casToken;
             return $item;
