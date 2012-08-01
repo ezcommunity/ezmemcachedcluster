@@ -61,9 +61,14 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
         $this->options = $options;
 
         if ( $options->usePersistentConnection && $options->connectionIdentifier != '' )
+        {
             $this->gateway = new Memcached( $options->connectionIdentifier );
+            eZLog::write( 'Persistence: '.print_r( $this->gateway->isPersistent(), true ).'/'.$options->connectionIdentifier, 'memcached.log' );
+        }
         else
+        {
             $this->gateway = new Memcached;
+        }
 
         // Now set options
         $this->gateway->setOption( Memcached::OPT_COMPRESSION, $options->useCompression );
@@ -75,26 +80,33 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
         // Connect to Memcached backend
         if ( $options->connectTimeout )
             $this->gateway->setOption( Memcached::OPT_CONNECT_TIMEOUT, $options->connectTimeout );
-        $servers = array();
-        foreach ( $options->servers as $serverSpec )
+
+        //verify if server list is empty and servers has to be added
+        //eZLog::write( 'API Servers: '. print_r( $this->gateway->getServerList(), true ), 'memcached.log' );
+        if( count( $this->gateway->getServerList() ) < count( $options->servers ) )
         {
-            $weight = null;
-            if ( strpos( $serverSpec, ';' ) !== false )
-                list( $serverSpec, $weight ) = explode( ';', $serverSpec );
+            $servers = array();
+            foreach ( $options->servers as $serverSpec )
+            {
+                $weight = null;
+                if ( strpos( $serverSpec, ';' ) !== false )
+                    list( $serverSpec, $weight ) = explode( ';', $serverSpec );
 
-            list( $host, $port ) = explode( ':', $serverSpec );
-            $server = array( $host, (int)$port );
-            if ( isset( $weight ) )
-                $server[] = $weight;
+                list( $host, $port ) = explode( ':', $serverSpec );
+                $server = array( $host, (int)$port );
+                if ( isset( $weight ) )
+                    $server[] = $weight;
 
-            $servers[] = $server;
-        }
+                $servers[] = $server;
+            }
+            eZLog::write( 'Adding servers: '. print_r( $servers, true ), 'memcached.log' );
 
-        if ( !$this->gateway->addServers( $servers ) )
-        {
-            $errCode = $this->gateway->getResultCode();
-            $errMsg = $this->gateway->getResultMessage();
-            throw new eZMemcachedException( $errMsg, $errCode );
+            if ( !$this->gateway->addServers( $servers ) )
+            {
+                $errCode = $this->gateway->getResultCode();
+                $errMsg = $this->gateway->getResultMessage();
+                throw new eZMemcachedException( $errMsg, $errCode );
+            }
         }
     }
 
