@@ -61,9 +61,18 @@ class eZMemcachedClusterClientMemcached implements eZMemcachedClusterClient
         $this->options = $options;
 
         if ( $options->usePersistentConnection && $options->connectionIdentifier != '' )
+        {
             $this->gateway = new Memcached( $options->connectionIdentifier );
+
+            // In case of persistent connection, verify if it is initialized,
+            // in which case there is nothing left to do.
+            if ( count( $this->gateway->getServerList() ) )
+                return;
+        }
         else
+        {
             $this->gateway = new Memcached;
+        }
 
         // Now set options
         $this->gateway->setOption( Memcached::OPT_COMPRESSION, $options->useCompression );
