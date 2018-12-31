@@ -1,6 +1,6 @@
 # eZ Memcached cluster
 
-This extension adds cluster events support with [Memcached](http://memcached.org) backend server.
+[Deprecated] This extension adds cluster events support with [Memcached](http://memcached.org) backend server.
 
 
 ## Requirements
